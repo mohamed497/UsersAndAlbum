@@ -29,37 +29,6 @@ class UsersViewModel(private val usersRepo: UsersRepo) : ViewModel() {
         return usersRepo.getAllAlbumsOfUser(user.id)
     }
 
-    fun getAlbumsForAllUsers() {
-        usersRepo.getAllUsers()
-            .flatMap { users ->
-                val album = users.map(::getSingleAlbum)
-                return@flatMap Observable.just(album)
-            }
-            .flatMapIterable { observableList ->
-                return@flatMapIterable observableList
-            }
-            .flatMap { albumsObservable ->
-                return@flatMap albumsObservable
-            }
-            .toList()
-            .toObservable()
-            .flatMap { albums ->
-                val getAllAlbumsList = albums.flatten()
-                return@flatMap Observable.just(getAllAlbumsList)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ albumsList ->
-                albums.value = albumsList
-
-            }, { throwable ->
-                Log.d("UserViewModel", throwable.toString())
-            }, {
-                Log.d("UserViewModel", "Albums_Completed")
-            })
-    }
-
-
     fun getAlbumsUsingZip() {
         usersRepo.getAllUsers()
             .flatMap { users ->
@@ -90,105 +59,7 @@ class UsersViewModel(private val usersRepo: UsersRepo) : ViewModel() {
             )
 
     }
-
-
-    //    List<Observable<List<AlbumsModel>>>
-//    fun test() {
-//        usersRepo.getAllUsers()
-//            .flatMap { users ->
-//                val album = users.map(::getSingleAlbum)
-//                return@flatMap Observable.just(album)
-//            }.map {
-//                Observable.zip(it, Function { args ->
-//                    val result = ArrayList<AlbumsModel>()
-//                    for (obj in args) {
-//                        val c = obj as AlbumsModel
-//                        result.add(c)
-//                    }
-//                    return@Function result
-//
-//                })
-//            }.flatMap { albumsObservable ->
-//                return@flatMap albumsObservable
-//            }.toList()
-//            .toObservable()
-//            .flatMap { albums ->
-//                val getAllAlbumsList = albums.flatten()
-//                return@flatMap Observable.just(getAllAlbumsList)
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ albumsList ->
-//                albums.value = albumsList
-//
-//            }, { throwable ->
-//                Log.d("UserViewModel", throwable.toString())
-//            }, {
-//                Log.d("UserViewModel", "Albums_Completed")
-//            })
-//    }
-//    fun getAlbumsUsingZip() {
-//        usersRepo.getAllUsers()
-//            .flatMap { users ->
-//                val album = users.map(::getSingleAlbum)
-//                return@flatMap Observable.just(album)
-//            }.flatMapIterable { listOfObservableOfAlbum ->
-//                Observable.zip(listOfObservableOfAlbum, Function { args ->
-//                    val result = ArrayList<AlbumsModel>()
-//                    for (obj in args) {
-//                        val c = obj as AlbumsModel
-//                        result.add(c)
-//                    }
-//                    return@Function result
-//                })
-//                return@flatMapIterable listOfObservableOfAlbum
-//            }
-//            .flatMap { observableOfAlbum ->
-//                return@flatMap observableOfAlbum
-//            }
-//            .toList()
-//            .toObservable()
-//            .flatMap { albums ->
-//                val getAllAlbumsList = albums.flatten()
-//                return@flatMap Observable.just(getAllAlbumsList)
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ albumsList ->
-//                albums.value = albumsList
-//
-//            }, { throwable ->
-//                Log.d("UserViewModel", throwable.toString())
-//            }, {
-//                Log.d("UserViewModel", "Albums_Completed")
-//            })
-//    }
-    fun getAlbumsList(): Observable<List<AlbumsModel>> {
-        return (usersRepo.getAllUsers().flatMap { users ->
-            val album = users.map(::getSingleAlbum)
-            return@flatMap Observable.just(album)
-        }.flatMapIterable { observableList ->
-            return@flatMapIterable observableList
-        }.flatMap { albumsObservable ->
-            return@flatMap albumsObservable
-        })
-    }
-
-    fun test() {
-        Observable.zip(usersRepo.getAllUsers(), getAlbumsList(), { _, albumsList ->
-            albums.postValue(albumsList)
-        })
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-
-            }, { throwable ->
-                Log.d("UserViewModel", throwable.toString())
-            }, {
-                Log.d("UserViewModel", "Albums_Completed")
-
-            })
-    }
+    
 
     override fun onCleared() {
         super.onCleared()
