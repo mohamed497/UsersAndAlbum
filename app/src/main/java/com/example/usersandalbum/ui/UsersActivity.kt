@@ -21,16 +21,6 @@ class UsersActivity : AppCompatActivity() {
         initViewModel()
 
 
-//        viewModel.fetchAlbums()
-//        viewModel.album.observe(this, { albums ->
-//            initAdapter(albums)
-//        })
-//        viewModel.fetchUsers()
-//        viewModel.album.observe(this, { albumsModel ->
-//            initAdapter(albumsModel)
-//        })
-
-//        viewModel.getAlbumsForAllUsers()
         viewModel.getAlbumsUsingZip()
         viewModel.observeOnNews(this, { albums ->
             initAdapter(albums)

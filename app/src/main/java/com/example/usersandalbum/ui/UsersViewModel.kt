@@ -70,7 +70,8 @@ class UsersViewModel(private val usersRepo: UsersRepo) : ViewModel() {
                     val result = ArrayList<AlbumsModel>()
                     for (obj in args) {
                         val album = obj as? AlbumsModel
-                        album?.let { result.add(it) }
+                        album?.let { album ->
+                            result.add(album) }
                     }
 //                    albums.postValue(result)
                     return@Function result
